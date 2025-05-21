@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Filtered logger module
+Filtered logger modulie
 """
 import re
 import logging
@@ -17,11 +17,13 @@ def filter_datum(fields: List[str], redaction: str, message: str,
     """
     Obfuscates specified fields in a log message.
     """
-    return re.sub(
-        fr'({"|".join(fields)})=.*?{separator}',
-        lambda m: f"{m.group(1)}={redaction}{separator}",
-        message,
-    )
+    pattern = fr'({"|".join(fields)})=.*?(?:{separator}|\Z)'
+
+    def replace(match):
+        sep = separator if match.group(0).endswith(separator) else ''
+        return f"{match.group(1)}={redaction}{separator}"
+
+    return re.sub(pattern, replace, message)
 
 
 class RedactingFormatter(logging.Formatter):
