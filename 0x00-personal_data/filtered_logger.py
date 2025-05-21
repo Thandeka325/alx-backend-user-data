@@ -9,20 +9,17 @@ import mysql.connector
 from typing import List
 
 
-patterns = {
-    'extract': lambda x, y: r'(?P<field>{})=[^{}]*'.format('|'.join(x), y),
-    'replace': lambda x: r'\g<field>={}'.format(x),
-}
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
 
-def filter_datum(
-        fields: List[str], redaction: str, message: str, separator: str,
-        ) -> str:
-    """Filters a log line.
+def filter_datum(fields: List[str], redaction: str, message: str,
+                 separator: str) -> str:
     """
-    extract, replace = (patterns["extract"], patterns["replace"])
-    return re.sub(extract(fields, separator), replace(redaction), message)
+    Obfuscates specified fields in a log message.
+    """
+    pattern = r'(?P<field>{})=[^{}]*'.format('|'.join(fields), separator)
+    repl = r'\g<field>={}'.format(redaction)
+    return re.sub(pattern, repl, message)
 
 
 class RedactingFormatter(logging.Formatter):
