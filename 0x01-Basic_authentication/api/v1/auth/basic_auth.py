@@ -3,6 +3,7 @@
 BasicAuth module
 """
 from api.v1.auth.auth import Auth
+from models.user import User
 
 
 class BasicAuth(Auth):
@@ -81,8 +82,6 @@ class BasicAuth(Auth):
         Returns:
             User: The user instance if found and valid, otherwise None
         """
-        from models.user import User
-
         if user_email is None or not isinstance(user_email, str):
             return None
         if user_pwd is None or not isinstance(user_pwd, str):
