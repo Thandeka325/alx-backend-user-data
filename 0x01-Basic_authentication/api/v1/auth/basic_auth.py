@@ -90,7 +90,7 @@ class BasicAuth(Auth):
         try:
             users = User.search({"email": user_email})
         except Exception:
-            return none
+            return None
 
         if not users:
             return None
