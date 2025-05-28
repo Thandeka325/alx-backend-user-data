@@ -4,6 +4,7 @@ This module defines the base class for handling API authentication.
 """
 from typing import List, TypeVar
 from flask import request
+from os import getenv
 
 
 class Auth:
@@ -67,3 +68,21 @@ class Auth:
             TypeVar('User'): None by default
         """
         return None
+
+    def session_cookie(self, request=None):
+        """
+        Returns the session cookie value from the request
+
+        Args:
+            request (flask.Request): The request obect
+        Returns:
+            str: The value of the session cookie or None
+        """
+        if request is None:
+            return None
+
+        session_name = getenv("SESSION_NAME")
+        if session_name is None:
+            return None
+
+        return request.cookies.get(session_name)
