@@ -35,21 +35,21 @@ class SessionExpAuth(SessionAuth):
         if session_id is None:
             return None
 
-        session_dict = self.user_id_by_session_id.get(session_id)
-        if not session_dict:
-            return None
+        user_sessions = storage.all(UserSession).values()
+        for session in user_sessions:
+            if session.session_id == session_id:
+                if self.session_duration <= 0:
+                    return session.user_id
 
-        if self.session_duration <= 0:
-            return session_dict.get('user_id')
+                if not hasattr(session, "created_at"):
+                    return None
 
-        if 'created_at' not in session_dict:
-            return None
+                expire_at = (
+                        session.created_at +
+                        timedelta(seconds=self.session_duration)
+                )
+                if expire_at < datetime.now():
+                    return None
 
-        created_at = session_dict['created_at']
-        if (
-                created_at + timedelta(seconds=self.session_duration)
-                < datetime.now()
-        ):
-            return None
-
-        return session_dict.get('user_id')
+                return session.user_id
+        return None
