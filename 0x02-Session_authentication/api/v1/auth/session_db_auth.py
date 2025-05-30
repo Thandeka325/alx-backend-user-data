@@ -4,7 +4,6 @@ Session-based authentication with DB persistence
 """
 from datetime import datetime
 from models.user_session import UserSession
-from models import storage
 from api.v1.auth.session_exp_auth import SessionExpAuth
 
 
