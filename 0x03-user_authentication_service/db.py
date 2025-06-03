@@ -68,11 +68,16 @@ class DB:
             NoResultFound: If no matching user is found.
             InvalidRequestError: If query parameters are invalid.
         """
+        if not kwargs:
+            raise InvalidRequestError("No attributes provided")
+
+        for key in kwargs.keys():
+            if not hasattr(User, key):
+                raise InvalidRequestError(f"Invalid field: {key}")
+
         try:
             return self._session.query(User).filter_by(**kwargs).one()
         except NoResultFound:
-            raise
-        except InvalidRequestError:
             raise
 
     def update_user(self, user_id: int, **kwargs) -> None:
@@ -89,7 +94,7 @@ class DB:
         user = self.find_user_by(id=user_id)
 
         for key, value in kwargs.items():
-            if not hasattr(user, key):
+            if not hasattr(User, key):
                 raise ValueError(f"Invalid field: {key}")
             setattr(user, key, value)
 
