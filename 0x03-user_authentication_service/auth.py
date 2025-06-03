@@ -32,7 +32,7 @@ def _generate_uuid() -> str:
     Returns:
         str: A new UUID string.
     """
-    return str(uuid.uuid4())
+    return str(uuid4())
 
 
 class Auth:
@@ -84,7 +84,7 @@ class Auth:
         except Exception:
             return False
 
-    def create_session(self, email: str) -> str:
+    def create_session(self, email: str) -> Optional[str]:
         """
         Creates a session ID for the user identified by the given email.
 
@@ -92,11 +92,11 @@ class Auth:
             email (str): The user's email.
 
         Returns:
-            str: The session ID if the user exists, else None.
+            Optional[str]: The session ID if the user exists, else None.
         """
         try:
             user = self._db.find_user_by(email=email)
-        except Exception:
+        except NoResultFound:
             return None
 
         session_id = _generate_uuid()
@@ -112,7 +112,7 @@ class Auth:
         try:
             user = self._db.find_user_by(session_id=session_id)
             return user
-        except Exception:
+        except NoResultFound:
             return None
 
     def destroy_session(self, user_id: int) -> None:
@@ -137,7 +137,7 @@ class Auth:
         """
         try:
             user = self._db.find_user_by(email=email)
-        except Exception:
+        except NoResultFount:
             raise ValueError("User not found")
 
         token = _generate_uuid()
@@ -149,12 +149,12 @@ class Auth:
         Update a user's password using the provided reset token.
         """
         if not reset_token or not password:
-            raise ValueError
+            raise ValueError("Missing token or password")
 
         try:
             user = self._db.find_user_by(reset_token=reset_token)
-        except Exception:
-            raise ValueError
+        except NoResultFound:
+            raise ValueError("Invalid reset token")
 
         hashed = _hash_password(password).decode('utf-8')
         self._db.update_user(user.id, hashed_password=hashed, reset_token=None)
