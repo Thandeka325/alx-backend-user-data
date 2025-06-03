@@ -93,7 +93,7 @@ def get_reset_password_token() -> str:
         abort(400)
 
     try:
-        reset_token = AUTH.get_rest_password_token(email)
+        reset_token = AUTH.get_reset_password_token(email)
         return jsonify({"email": email, "reset_token": reset_token}), 200
     except ValueError:
         abort(403)
@@ -112,7 +112,7 @@ def update_password() -> str:
         abort(400)
 
     try:
-        Auth.update_password(reset_token, new_password)
+        AUTH.update_password(reset_token, new_password)
         return jsonify({"email": email, "message": "Password updated"}), 200
     except Exception:
         abort(403)
