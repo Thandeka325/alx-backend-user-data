@@ -95,7 +95,7 @@ class Auth:
             str: The session ID if the user exists, else None.
         """
         try:
-            user = self._db.find_user_by(email-email)
+            user = self._db.find_user_by(email=email)
         except Exception:
             return None
 
@@ -140,9 +140,13 @@ class Auth:
         except Exception:
             raise ValueError("User not found")
 
+        token = _generate_uuid()
+        self._db.update_user(user.id, reset_token=token)
+        return token
+
     def update_password(self, reset_token: str, password: str) -> None:
         """
-        Update a user's password useing the provided reset token.
+        Update a user's password using the provided reset token.
         """
         if not reset_token or not password:
             raise ValueError
@@ -152,5 +156,5 @@ class Auth:
         except Exception:
             raise ValueError
 
-        hashed = _hash_password(password)
+        hashed = _hash_password(password).decode('utf-8')
         self._db.update_user(user.id, hashed_password=hashed, reset_token=None)
