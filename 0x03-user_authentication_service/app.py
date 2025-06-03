@@ -43,8 +43,8 @@ def login():
     """
     Post /sessions route to log in a user
     """
-    email = request.form.get('email')
-    password = request.form.get('password')
+    email = request.form.get("email")
+    password = request.form.get("password")
 
     if not AUTH.valid_login(email, password):
         abort(401)
