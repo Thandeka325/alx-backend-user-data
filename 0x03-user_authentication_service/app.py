@@ -39,7 +39,7 @@ def users() -> str:
 
 
 @app.route("/sessions", methods=["POST"])
-def login():
+def login() -> str:
     """
     Post /sessions route to log in a user
     """
@@ -59,7 +59,7 @@ def login():
 
 
 @app.route("/sessions", methods=["DELETE"])
-def logout():
+def logout() -> str:
     """
     Logout endpoint
     """
@@ -72,7 +72,7 @@ def logout():
 
 
 @app.route("/profile", methods=["GET"])
-def profile():
+def profile() -> str:
     """
     User profile endpoint.
     """
@@ -93,8 +93,8 @@ def get_reset_password_token() -> str:
         abort(400)
 
     try:
-        token = AUTH.get_rest_password_token(email)
-        return jsonify({"email": email, "reset_token": token}), 200
+        reset_token = AUTH.get_rest_password_token(email)
+        return jsonify({"email": email, "reset_token": reset_token}), 200
     except ValueError:
         abort(403)
 
@@ -112,7 +112,7 @@ def update_password() -> str:
         abort(400)
 
     try:
-        auth.update_password(reset_token, new_password)
+        Auth.update_password(reset_token, new_password)
         return jsonify({"email": email, "message": "Password updated"}), 200
     except Exception:
         abort(403)
